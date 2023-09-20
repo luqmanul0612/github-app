@@ -37,7 +37,7 @@ const UserAccordionTrigger = React.forwardRef<
       ref={forwardedRef}
     >
       <Accordion.Header className="flex">
-        <Accordion.Trigger className="group/accordion-trigger flex flex-1 items-center justify-between border-b-[1px] border-transparent bg-transparent bg-white p-[0_20px] py-[10px] text-[15px] leading-none text-blue-500 shadow-[0_1px_0_theme(theme.colors.slate.600)] outline-none transition-colors duration-200 ease-in-out hover:bg-slate-200 data-[state=closed]:border-slate-300 data-[state=open]:bg-slate-100">
+        <Accordion.Trigger className="group/accordion-trigger flex flex-1 items-center justify-between border-b-[1px] border-transparent bg-transparent bg-white p-[0_20px] py-[10px] text-[15px] leading-none text-blue-500 outline-none transition-colors duration-200 ease-in-out hover:bg-slate-200 data-[state=closed]:border-slate-300 data-[state=open]:bg-slate-100">
           <div className="flex justify-between">
             <div className="flex gap-3">
               <Avatar src={user.data?.avatar_url ?? ""} />
