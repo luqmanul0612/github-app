@@ -21,8 +21,6 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use(function (config) {
-  const token = import.meta.env.VITE_DEFAULT_TOKEN;
-  config.headers.Authorization = token ? `Bearer ${token}` : "";
   return config;
 });
 
