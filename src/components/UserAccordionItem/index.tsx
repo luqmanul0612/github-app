@@ -5,7 +5,6 @@ import { api } from "../../lib/utils/api";
 import { GetUserResponse } from "../../lib/utils/api/types/user.types";
 import { ChevronDownIcon, StarIcon } from "@heroicons/react/20/solid";
 import * as Accordion from "@radix-ui/react-accordion";
-import clsx from "clsx";
 import { GetReposResponse } from "../../lib/utils/api/types/repos.types";
 import "./customScrollbar.css";
 import cn from "../../lib/utils/cn";
@@ -30,7 +29,7 @@ const UserAccordionTrigger = React.forwardRef<
 
   return (
     <Accordion.Item
-      className={clsx(
+      className={cn(
         "overflow-hidden first:mt-0 first:rounded-tl-[4px] first:rounded-tr-[4px] last:rounded-bl-[4px] last:rounded-br-[4px] focus-within:relative focus-within:z-[1] focus-within:shadow-[0_0_0_2px_theme(colors.blue.500)]",
         className,
       )}
