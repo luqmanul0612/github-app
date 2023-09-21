@@ -9,12 +9,14 @@ import CircleLoading from "./components/Loading/CircleLoading";
 import * as Accordion from "@radix-ui/react-accordion";
 import UserAccordionItem from "./components/UserAccordionItem";
 import UsersLoading from "./components/Loading/UsersLoading";
+import { ToastContext, ToastContextProps } from "./lib/ToastProvider";
 
 function App() {
+  const { openToast } = React.useContext(ToastContext) as ToastContextProps;
   const [username, setUsername] = React.useState("");
   const [searchValue, setSearchValue] = React.useState({ username: "" });
 
-  const search = useQuery({
+  const search = useQuery<SearchResponse, any>({
     queryKey: ["search", searchValue.username],
     queryFn: () =>
       api
@@ -24,6 +26,17 @@ function App() {
         .then((res) => res.data),
     enabled: !!searchValue.username.length,
   });
+
+  React.useEffect(() => {
+    if (search.error) {
+      openToast({
+        status: "failed",
+        title: "Error",
+        description:
+          search.error?.response?.data?.message ?? "Something went wrong",
+      });
+    }
+  }, [search.error]);
 
   const onSubmit: React.FormEventHandler<HTMLElement> | undefined = (e) => {
     e.preventDefault();

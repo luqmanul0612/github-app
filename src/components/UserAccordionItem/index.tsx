@@ -10,6 +10,7 @@ import "./customScrollbar.css";
 import cn from "../../lib/utils/cn";
 import ReposLoading from "../Loading/ReposLoading";
 import { UserLoading } from "../Loading/UsersLoading";
+import { ToastContext, ToastContextProps } from "../../lib/ToastProvider";
 
 type UserProps = {
   username: string;
@@ -19,13 +20,25 @@ const UserAccordionTrigger = React.forwardRef<
   HTMLDivElement,
   Accordion.AccordionItemProps & UserProps
 >(({ className, ...props }, forwardedRef) => {
-  const user = useQuery({
+  const { openToast } = React.useContext(ToastContext) as ToastContextProps;
+  const user = useQuery<GetUserResponse, any>({
     queryKey: ["user", props.username],
     queryFn: async () =>
       api
         .get<GetUserResponse>(`https://api.github.com/users/${props.username}`)
         .then((res) => res.data),
   });
+
+  React.useEffect(() => {
+    if (user.error) {
+      openToast({
+        status: "failed",
+        title: "Error",
+        description:
+          user.error?.response?.data?.message ?? "Something went wrong",
+      });
+    }
+  }, [user.error]);
 
   return (
     <Accordion.Item
@@ -76,7 +89,8 @@ type AccordionContentProps = {
 };
 
 const AccordionContent: React.FC<AccordionContentProps> = (props) => {
-  const repos = useQuery({
+  const { openToast } = React.useContext(ToastContext) as ToastContextProps;
+  const repos = useQuery<GetReposResponse, any>({
     queryKey: ["repos", props.username],
     queryFn: async () =>
       api
@@ -85,6 +99,17 @@ const AccordionContent: React.FC<AccordionContentProps> = (props) => {
         )
         .then((res) => res.data),
   });
+
+  React.useEffect(() => {
+    if (repos.error) {
+      openToast({
+        status: "failed",
+        title: "Error",
+        description:
+          repos.error?.response?.data?.message ?? "Something went wrong",
+      });
+    }
+  }, [repos.error]);
   return (
     <div className="p-[15px_10px_15px_15px]">
       {repos.isLoading && <ReposLoading />}
