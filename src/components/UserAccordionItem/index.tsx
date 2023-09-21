@@ -9,10 +9,11 @@ import clsx from "clsx";
 import { GetReposResponse } from "../../lib/utils/api/types/repos.types";
 import "./customScrollbar.css";
 import cn from "../../lib/utils/cn";
+import ReposLoading from "../Loading/ReposLoading";
+import { UserLoading } from "../Loading/UsersLoading";
 
 type UserProps = {
   username: string;
-  open: boolean;
 };
 
 const UserAccordionTrigger = React.forwardRef<
@@ -40,15 +41,20 @@ const UserAccordionTrigger = React.forwardRef<
         <Accordion.Trigger className="group/accordion-trigger flex flex-1 items-center justify-between border-b-[1px] border-transparent bg-transparent bg-white p-[0_20px] py-[10px] text-[15px] leading-none text-blue-500 outline-none transition-colors duration-200 ease-in-out hover:bg-slate-200 data-[state=closed]:border-slate-300 data-[state=open]:bg-slate-100">
           <div className="flex justify-between">
             <div className="flex gap-3">
-              <Avatar src={user.data?.avatar_url ?? ""} />
-              <div className="flex flex-col items-start">
-                <h2 className="line-clamp-1 text-left text-sm font-normal text-slate-700 md:text-base">
-                  {user.data?.name ?? "Anonymous"}
-                </h2>
-                <p className="text-left text-[10px] font-semibold text-slate-500 md:text-xs">
-                  {user.data?.login}
-                </p>
-              </div>
+              {user.isFetching && <UserLoading />}
+              {!user.isFetching && (
+                <>
+                  <Avatar src={user.data?.avatar_url ?? ""} />
+                  <div className="flex flex-col items-start">
+                    <h2 className="line-clamp-1 text-left text-sm font-normal text-slate-700 md:text-base">
+                      {user.data?.name ?? "-"}
+                    </h2>
+                    <p className="text-left text-[10px] font-semibold text-slate-500 md:text-xs">
+                      {user.data?.login}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <ChevronDownIcon
@@ -58,7 +64,7 @@ const UserAccordionTrigger = React.forwardRef<
         </Accordion.Trigger>
       </Accordion.Header>
       <Accordion.Content className="overflow-hidden text-[15px] text-slate-900 data-[state=closed]:animate-[slideUp_300ms_cubic-bezier(0.87,_0,_0.13,_1)] data-[state=open]:animate-[slideDown_300ms_cubic-bezier(0.87,_0,_0.13,_1)]">
-        <AccordionContent open={props.open} username={props.username} />
+        <AccordionContent username={props.username} />
       </Accordion.Content>
     </Accordion.Item>
   );
@@ -68,7 +74,6 @@ export default UserAccordionTrigger;
 
 type AccordionContentProps = {
   username: string;
-  open: boolean;
 };
 
 const AccordionContent: React.FC<AccordionContentProps> = (props) => {
@@ -83,34 +88,44 @@ const AccordionContent: React.FC<AccordionContentProps> = (props) => {
   });
   return (
     <div className="p-[15px_10px_15px_15px]">
-      <div className="grid max-h-[300px] grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-[10px] overflow-auto pr-[10px]">
-        {repos.data?.map((repo) => (
-          <div className="rounded-[4px] border-[1px] border-slate-300 p-[10px] hover:border-blue-300">
-            <div className="flex justify-between">
-              <div>
-                <h2 className="text-sm font-semibold text-slate-600">
-                  {repo.name}
-                </h2>
-                <p className="line-clamp-3 text-xs font-normal text-slate-600">
-                  {repo.description ?? "-"}
-                </p>
-              </div>
-              <div className="flex h-fit items-center justify-center gap-[2px]">
-                {repo.stargazers_count > 0 && (
-                  <p className="text-[12px] font-semibold text-slate-500">
-                    {repo.stargazers_count}
+      {repos.isLoading && <ReposLoading />}
+      {!repos.isLoading && !repos.data?.length && (
+        <div className="flex min-h-[100px] w-full items-center justify-center">
+          <p className="text-sm font-semibold text-slate-600">
+            No Repositories..
+          </p>
+        </div>
+      )}
+      {!repos.isLoading && (
+        <div className="grid max-h-[300px] grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-[10px] overflow-auto pr-[10px]">
+          {repos.data?.map((repo) => (
+            <div className="min-h-[100px] rounded-[4px] border-[1px] border-slate-300 p-[10px] hover:border-blue-300">
+              <div className="flex justify-between">
+                <div>
+                  <h2 className="text-sm font-semibold text-slate-600">
+                    {repo.name}
+                  </h2>
+                  <p className="line-clamp-3 text-xs font-normal text-slate-600">
+                    {repo.description ?? "-"}
                   </p>
-                )}
-                <StarIcon
-                  className={cn("h-[15px] w-[15px] text-slate-300", {
-                    "text-yellow-500": repo.stargazers_count > 0,
-                  })}
-                />
+                </div>
+                <div className="flex h-fit items-center justify-center gap-[2px]">
+                  {repo.stargazers_count > 0 && (
+                    <p className="text-[12px] font-semibold text-slate-500">
+                      {repo.stargazers_count}
+                    </p>
+                  )}
+                  <StarIcon
+                    className={cn("h-[15px] w-[15px] text-slate-300", {
+                      "text-yellow-500": repo.stargazers_count > 0,
+                    })}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

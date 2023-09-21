@@ -8,11 +8,11 @@ import * as Separator from "@radix-ui/react-separator";
 import CircleLoading from "./components/Loading/CircleLoading";
 import * as Accordion from "@radix-ui/react-accordion";
 import UserAccordionItem from "./components/UserAccordionItem";
+import UsersLoading from "./components/Loading/UsersLoading";
 
 function App() {
   const [username, setUsername] = React.useState("");
   const [searchValue, setSearchValue] = React.useState({ username: "" });
-  const [selectedUser, SetSelectedUser] = React.useState<string | null>(null);
 
   const search = useQuery({
     queryKey: ["search", searchValue.username],
@@ -33,7 +33,7 @@ function App() {
   return (
     <main
       onSubmit={onSubmit}
-      className="flex min-h-screen w-full flex-col items-center p-[10px]"
+      className="mb-[100px] flex min-h-screen w-full flex-col items-center p-[10px]"
     >
       <form className="mt-[100px] box-border flex w-full flex-col rounded-[4px] bg-white px-[20px] py-[25px] md:w-[700px] md:px-[30px]">
         <div className="flex gap-3">
@@ -51,7 +51,7 @@ function App() {
           >
             {search.isFetching && (
               <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-inherit">
-                <CircleLoading className="text-slate-500" />
+                <CircleLoading className="h-[23px] w-[23px] text-slate-500" />
               </div>
             )}
             Search
@@ -64,23 +64,32 @@ function App() {
         </p>
       </form>
       <Separator.Root className="my-[20px] h-[1px] w-full bg-slate-400 md:w-[700px]" />
-      <Accordion.Root
-        className="w-full rounded-[6px] bg-white shadow-[0_2px_10px_theme(colors.slate.400)] md:w-[700px]"
-        type="single"
-        defaultValue="item-1"
-        collapsible
-      >
-        {search.data?.items?.map((item) => (
-          <UserAccordionItem
-            key={item.id}
-            username={item.login}
-            value={item.login}
-            open={item.login === selectedUser}
-            onClick={() => SetSelectedUser(item.login)}
-          />
-        ))}
-      </Accordion.Root>
-      <div className="box-border flex w-full flex-col gap-3 md:w-[700px]"></div>
+      {search.isFetching && <UsersLoading />}
+      {!search.isFetching && !search.data?.items.length && (
+        <div className="flex min-h-[200px] w-full items-center justify-center rounded-[4px] bg-white md:w-[700px]">
+          <p className="text-sm font-semibold text-slate-500">
+            {!searchValue.username.length
+              ? "Nothing to look for yet."
+              : "Data not found."}
+          </p>
+        </div>
+      )}
+      {!search.isFetching && !!search.data?.items && (
+        <Accordion.Root
+          className="w-full rounded-[6px] bg-white shadow-[0_2px_10px_theme(colors.slate.400)] md:w-[700px]"
+          type="single"
+          defaultValue="item-1"
+          collapsible
+        >
+          {search.data?.items?.map((item) => (
+            <UserAccordionItem
+              key={item.id}
+              username={item.login}
+              value={item.login}
+            />
+          ))}
+        </Accordion.Root>
+      )}
     </main>
   );
 }

@@ -2,7 +2,6 @@ import cn from "../../../lib/utils/cn";
 import "./CircleLoading.css";
 
 type CircleLoadingProps = {
-  size?: string;
   className?: string;
 };
 
@@ -10,8 +9,6 @@ const CircleLoading: React.FC<CircleLoadingProps> = (props) => {
   return (
     <svg
       className={cn("circleAnimation rounded-full text-white", props.className)}
-      width={props.size}
-      height={props.size}
       version="1.1"
       viewBox="0 0 100 100"
     >
@@ -77,6 +74,5 @@ const CircleLoading: React.FC<CircleLoadingProps> = (props) => {
 export default CircleLoading;
 
 CircleLoading.defaultProps = {
-  size: "22px",
-  className: "",
+  className: "w-[22px] h-[22px]",
 };

@@ -17,18 +17,6 @@ export const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   headers: {
     "Content-type": "application/vnd.github+json",
+    // "Authorization": "Bearer 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"
   },
 });
-
-api.interceptors.request.use(function (config) {
-  return config;
-});
-
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    throw error;
-  },
-);
