@@ -1,7 +1,3 @@
-React Js Developer test submission by Muhammad Luqmanul Hakim
-
---
-
 This project was build with React Js
 
 ## Getting Started
@@ -27,7 +23,3 @@ pnpm dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) with your browser to see the development server.
-
--- or --
-
-Open [https://github-app.hakimdev.site](https://github-app.hakimdev.site) to view deployment web.
